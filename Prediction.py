@@ -36,7 +36,7 @@ header = st.container()
 with header:
 	st.header('Ethereum Fraud Prediction System')
 	st.image('data/images/cover_photo.jpg')
-	st.text('Welcome to Ethereum Fraud Prediction Models\nThe prediction uses (16) features and performing with up to 96% Accuracy\nPlease enter below values in order to predict')
+	st.text('Welcome to Ethereum Fraud Prediction Models\nThe prediction uses (16) features and performing with up to 99% Accuracy\nPlease enter below values in order to predict')
 
 # Input data collection form
 with st.form(key='values'):
