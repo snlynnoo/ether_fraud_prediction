@@ -1,3 +1,4 @@
+# Importing libraries
 import streamlit as st 
 import pandas as pd
 import numpy
@@ -7,7 +8,7 @@ from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 from joblib import load
 
-
+# Setting custom title and BG color
 st.set_page_config(
 	page_title = "Fraud Prediction",
 	page_icon = '🔎'
@@ -23,25 +24,21 @@ st.markdown(
 	""", unsafe_allow_html=True
 )
 
-
+# Model selection radio button
 model_name = st.sidebar.radio(
     'Select Model',
     ('Random Forest', 'XGBoost','Logistic Regression')
 	)
 
 header = st.container()
-dataset = st.container()
-features = st.container()
-input_data = st.container()
-model_training = st.container()
 
-
+# Into header and image
 with header:
 	st.header('Ethereum Fraud Prediction System')
 	st.image('data/images/cover_photo.jpg')
 	st.text('Welcome to Ethereum Fraud Prediction Models\nThe prediction uses (16) features and performing with up to 96% Accuracy\nPlease enter below values in order to predict')
 
-
+# Input data collection form
 with st.form(key='values'):
 	input1 = st.number_input('Average minutes between sent transaction')
 	input2 = st.number_input('Avgrage minutes between received transaction')
@@ -61,6 +58,7 @@ with st.form(key='values'):
 
 	submited_data = st.form_submit_button(label = 'Predict')
 
+# Variable for input data to feed the model
 data_to_predict  = pd.DataFrame(
               ({'Avg min between sent tnx': [input1], 'Avg min between received tnx':[input2],
                'Time Diff between first and last (Mins)': [input3], 
@@ -71,39 +69,34 @@ data_to_predict  = pd.DataFrame(
                 'ERC20 total Ether sent contract': [input13],
                 'ERC20 uniq sent addr': [input14],'ERC20 uniq rec token name': [input15]}))
 
-# with open('models/RF.pickle', 'rb') as handle:
-#     RF = pickle.load(handle, encoding='latin1')
-# with open('models/LR.pickle', 'rb') as handle:
-#     LR = pickle.load(handle, encoding='latin1')
-# with open('models/XGB_C_f.pickle', 'rb') as handle:
-#     XGBoost = pickle.load(handle, encoding='latin1')
+# Loading pre-built models
+# Loading Random Forest
+with open('models/RF.pickle', 'rb') as handle:
+    RF = pickle.load(handle, encoding='latin1')
+# Loading Logistic Regression
+with open('models/LR.pickle', 'rb') as handle:
+    LR = pickle.load(handle, encoding='latin1')
+# Loading XGBoost 
+XGB_C = XGBClassifier()
+XGB_C.load_model("models/XGB_C_Final.json")
 
-
-# RF = load('models/RF.pickle')
-# LR = load('models/LR.pickle')
-#XGBoost = load('models/XGB.pickle')
-# with open('models/XGB_C.pickle', 'rb') as handle:
-#     XGB = pickle.load(handle)
-
-RF = pickle.load(open('models/RF.pickle', "rb"))
-LR = pickle.load(open('models/LR.pickle', "rb"))
-#LR = pickle.load(open('models/XGB.pickle', "rb"))
-
+# Setting model from user selection
 def get_model(model_name):
 	model = None
-	# if model_name == 'XGBoost':
-	# 	model = XGB
+	if model_name == 'XGBoost':
+		model = XGB_C
 	if model_name == 'Random Forest':
 		model = RF
 	if model_name == 'Logistic Regression':
 		model = LR
 	return model
-
 selected_model = get_model(model_name)
+
+# Predicting the fraud
 result = selected_model.predict(data_to_predict)
 result = result[0]
-# st.write(result)
 
+# Interpretation for model result
 def predict_result():
 	final_result = None
 	if result == 0:
@@ -113,4 +106,6 @@ def predict_result():
 	return final_result
 final_result = predict_result()
 st.success(final_result)
+
+#===== END =====
 
