@@ -1,7 +1,1 @@
-streamlit
-pandas
-numpy
-pickle
-scikit-learn
-xgboost
-joblib
+streamlit==1.17.0
